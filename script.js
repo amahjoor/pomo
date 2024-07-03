@@ -24,7 +24,7 @@ function startPauseTimer() {
             } else {
                 clearInterval(timer);
                 isRunning = false;
-                isPaused = false;
+                isPaused = true;
                 startPauseButton.textContent = 'Start';
                 alert("Time's up!");
             }
@@ -32,8 +32,7 @@ function startPauseTimer() {
     }
 }
 
-startButton.addEventListener('click', startTimer);
-resetButton.addEventListener('click', resetTimer);
+startPauseButton.addEventListener('click', startPauseTimer);
 
 // Initialize the display
 updateTimerDisplay();
