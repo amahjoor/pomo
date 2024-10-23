@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const WORK_TIME = 240 * 60; // 25 minutes in seconds
-const BREAK_TIME = 5 * 60; // 5 minutes in seconds
+const WORK_TIME = 240 * 60; // 240 minutes in seconds
+const BREAK_TIME = 55 * 60; // 55 minutes in seconds
 
 export default function PomodoroTimer() {
 const [timeLeft, setTimeLeft] = useState(WORK_TIME);
 const [isBreak, setIsBreak] = useState(false);
 const [isActive, setIsActive] = useState(false);
+
+const holdTimer = useRef<NodeJS.Timeout | null>(null); // Ref to manage hold timeout
 
 useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -32,25 +34,25 @@ const toggleTimer = () => {
     setIsActive((prev) => !prev);
 };
 
-/*
-            <button
-                className="bg-green-500 text-white px-4 py-2 rounded-md"
-                onClick={() => setIsActive(true)}
-            >Start</button>
-            <button
-                className="bg-red-500 text-white px-4 py-2 rounded-md"
-                onClick={() => setIsActive(false)}
-            >Pause</button>
-            <button
-            className="bg-gray-500 text-white px-4 py-2 rounded-md"
-            onClick={() => {
-            setIsActive(false);
-            setTimeLeft(WORK_TIME);
-            setIsBreak(false);
-            }}
-            >Reset</button>
-*/
+const startResetTimer = () => {
+    holdTimer.current = setTimeout(() => {
+        resetTimer();
+      }, 4000);  
+}
 
+const cancelResetTimer = () => {
+    if (holdTimer.current) {
+        clearTimeout(holdTimer.current);
+        holdTimer.current = null;
+    }
+};
+
+const resetTimer = () => {
+    setIsActive(false);
+    setTimeLeft(WORK_TIME);
+    setIsBreak(false);
+    toggleTimer;
+};
 
 return (
     <div className="flex flex-col items-center gap-2">
@@ -61,6 +63,9 @@ return (
             <a
                 className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
                 onClick={toggleTimer}
+                onMouseDown={startResetTimer}
+                onMouseUp={cancelResetTimer}
+                onMouseLeave={cancelResetTimer}
             >
             {isActive ? "pause" : "start"}
           </a>
