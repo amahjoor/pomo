@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Button from "./Button";
 
 const WORK_TIME = 240 * 60; // 240 minutes in seconds
 const BREAK_TIME = 55 * 60; // 55 minutes in seconds
@@ -9,6 +10,7 @@ export default function PomodoroTimer() {
 const [timeLeft, setTimeLeft] = useState(WORK_TIME);
 const [isBreak, setIsBreak] = useState(false);
 const [isActive, setIsActive] = useState(false);
+const [isReset, setIsReset] = useState(false);
 
 const holdTimer = useRef<NodeJS.Timeout | null>(null); // Ref to manage hold timeout
 
@@ -37,6 +39,7 @@ const toggleTimer = () => {
 const startResetTimer = () => {
     holdTimer.current = setTimeout(() => {
         resetTimer();
+        setIsReset(true);
       }, 4000);  
 }
 
@@ -51,26 +54,18 @@ const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(WORK_TIME);
     setIsBreak(false);
-    toggleTimer;
 };
 
 return (
-    <div className="flex flex-col items-center gap-2">
+    <div 
+        className="flex flex-col items-center gap-2">
         <h2 className="text-1xl">{isBreak ? "take a break." : "you've got this."}</h2>
         <p className="text-3xl font-mono">{formatTime(timeLeft)}</p>
-        <div className="flex gap-3">
-            <div className="flex gap-4 items-center flex-col sm:flex-row">
-            <a
-                className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-                onClick={toggleTimer}
-                onMouseDown={startResetTimer}
-                onMouseUp={cancelResetTimer}
-                onMouseLeave={cancelResetTimer}
-            >
-            {isActive ? "pause" : "start"}
-          </a>
-        </div>
-        </div>
+        <Button
+            isActive={isActive}
+            toggleTimer={toggleTimer}
+            resetTimer={resetTimer}
+        />
     </div>
 );
 }
