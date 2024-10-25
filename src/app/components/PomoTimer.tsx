@@ -58,9 +58,9 @@ export default function PomodoroTimer() {
 
     return (
         <div 
-            className="flex flex-col items-center gap-2">
+            className="flex flex-col items-center gap-3">
             <h2 className="text-1xl">{isBreak ? "take a break." : "you've got this."}</h2>
-            <p className="text-3xl font-mono">{formatTime(timeLeft)}</p>
+            <p className="text-6xl font-mono">{formatTime(timeLeft)}</p>
             <Button
                 isActive={isActive}
                 toggleTimer={toggleTimer}

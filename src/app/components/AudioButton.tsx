@@ -8,19 +8,22 @@ interface AudioButtonProps {
 }
 
 const AudioButton: React.FC<AudioButtonProps> = ({ src }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
-  const togglePlayPause = () => {
+  const togglePlayPause = async () => {
     if (!audioRef.current) return;
 
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+    try {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        await audioRef.current.play(); // Ensure play is awaited
+      }
+      setIsPlaying(!isPlaying);
+    } catch (error) {
+      console.error("Audio playback failed:", error);
     }
-
-    setIsPlaying(!isPlaying);
   };
 
   return (
